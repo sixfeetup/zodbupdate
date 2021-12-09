@@ -95,8 +95,12 @@ class Updater(object):
                 if record_count > TRANSACTION_COUNT:
                     record_count = 0
                     commit_count += 1
-                    self.__commit_transaction(t, True, commit_count)
-                    t = self.__new_transaction()
+                    # These intermediate commits are causing breaking
+                    # errors when converting Relstorage to py3
+                    logger.info('Skipping intermediate commit (#{}).'.format(
+                        commit_count))
+                    # self.__commit_transaction(t, True, commit_count)
+                    # t = self.__new_transaction()
 
             commit_count += 1
             self.__commit_transaction(t, record_count != 0, commit_count)
